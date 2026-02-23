@@ -1,23 +1,93 @@
 // Authentication state observer
-auth.onAuthStateChanged((user) => {
+auth.onAuthStateChanged(async (user) => {
+    const navLinks = document.querySelector('.nav-links');
+    const navIcons = document.querySelector('.nav-icons');
+    
     if (user) {
         // User is signed in
         console.log('User logged in:', user.email);
         
-        // Check if user is admin
-        checkIfUserIsAdmin(user.uid);
+        // Update navigation - remove login button, add user icon and logout
+        updateNavigationForLoggedInUser(user);
         
-        // Update UI for logged in user
-        updateUIForLoggedInUser(user);
+        // Check if user is admin
+        const isAdmin = await checkIfUserIsAdmin(user.uid);
         
         // Load user profile data
         loadUserProfile(user.uid);
+        
+        // Load user's cart count
+        loadUserCartCount(user.uid);
     } else {
         // User is signed out
         console.log('User logged out');
-        updateUIForLoggedOutUser();
+        updateNavigationForLoggedOutUser();
     }
 });
+
+// Update navigation for logged in user
+function updateNavigationForLoggedInUser(user) {
+    const navIcons = document.querySelector('.nav-icons');
+    if (!navIcons) return;
+    
+    // Clear existing icons
+    navIcons.innerHTML = '';
+    
+    // Add wishlist
+    const wishlistIcon = document.createElement('i');
+    wishlistIcon.className = 'fa-regular fa-heart';
+    wishlistIcon.onclick = () => window.location.href = 'wishlist.html';
+    navIcons.appendChild(wishlistIcon);
+    
+    // Add profile icon with user's initial or default
+    const profileIcon = document.createElement('i');
+    profileIcon.className = 'fa-regular fa-circle-user';
+    profileIcon.onclick = () => window.location.href = 'profile.html';
+    navIcons.appendChild(profileIcon);
+    
+    // Add logout button
+    const logoutBtn = document.createElement('button');
+    logoutBtn.className = 'logout-btn';
+    logoutBtn.innerHTML = '<i class="fa-regular fa-right-from-bracket"></i> Logout';
+    logoutBtn.onclick = logoutUser;
+    navIcons.appendChild(logoutBtn);
+    
+    // Add cart with badge
+    const cartDiv = document.createElement('div');
+    cartDiv.className = 'cart-badge';
+    cartDiv.onclick = () => window.location.href = 'cart.html';
+    cartDiv.innerHTML = `
+        <i class="fa-regular fa-cart-shopping"></i>
+        <span>0</span>
+    `;
+    navIcons.appendChild(cartDiv);
+}
+
+// Update navigation for logged out user
+function updateNavigationForLoggedOutUser() {
+    const navIcons = document.querySelector('.nav-icons');
+    if (!navIcons) return;
+    
+    navIcons.innerHTML = '';
+    
+    // Add login button
+    const loginLink = document.createElement('a');
+    loginLink.href = 'login.html';
+    loginLink.style.color = 'inherit';
+    loginLink.style.textDecoration = 'none';
+    loginLink.innerHTML = '<i class="fa-regular fa-right-to-bracket"></i> Login';
+    navIcons.appendChild(loginLink);
+    
+    // Add cart
+    const cartDiv = document.createElement('div');
+    cartDiv.className = 'cart-badge';
+    cartDiv.onclick = () => window.location.href = 'cart.html';
+    cartDiv.innerHTML = `
+        <i class="fa-regular fa-cart-shopping"></i>
+        <span>0</span>
+    `;
+    navIcons.appendChild(cartDiv);
+}
 
 // Check if user is admin
 async function checkIfUserIsAdmin(uid) {
@@ -29,50 +99,14 @@ async function checkIfUserIsAdmin(uid) {
             
             // Store admin status in session
             sessionStorage.setItem('isAdmin', 'true');
+            return true;
         } else {
             sessionStorage.setItem('isAdmin', 'false');
+            return false;
         }
     } catch (error) {
         console.error('Error checking admin status:', error);
-    }
-}
-
-// Update UI for logged in user
-function updateUIForLoggedInUser(user) {
-    // Update navigation icons
-    const userIcon = document.querySelector('.fa-user');
-    if (userIcon) {
-        userIcon.classList.remove('fa-regular');
-        userIcon.classList.add('fa-solid');
-    }
-    
-    // Hide login link, show profile
-    const loginLink = document.querySelector('a[href="login.html"]');
-    if (loginLink) {
-        loginLink.style.display = 'none';
-    }
-    
-    // Update cart badge with user's cart count
-    loadUserCartCount(user.uid);
-}
-
-// Update UI for logged out user
-function updateUIForLoggedOutUser() {
-    const userIcon = document.querySelector('.fa-user');
-    if (userIcon) {
-        userIcon.classList.remove('fa-solid');
-        userIcon.classList.add('fa-regular');
-    }
-    
-    const loginLink = document.querySelector('a[href="login.html"]');
-    if (loginLink) {
-        loginLink.style.display = 'block';
-    }
-    
-    // Hide admin link
-    const adminLink = document.getElementById('adminLink');
-    if (adminLink) {
-        adminLink.style.display = 'none';
+        return false;
     }
 }
 
@@ -84,6 +118,7 @@ function showAdminLink() {
         adminLink.id = 'adminLink';
         adminLink.href = 'admin.html';
         adminLink.innerHTML = 'Admin';
+        adminLink.className = 'admin-link';
         navLinks.appendChild(adminLink);
     }
 }
@@ -95,23 +130,36 @@ async function loadUserProfile(uid) {
         if (userDoc.exists) {
             const userData = userDoc.data();
             
-            // Update profile page if it exists
-            const profileName = document.getElementById('profileName');
-            const profileEmail = document.getElementById('profileEmail');
-            const profilePhone = document.getElementById('profilePhone');
+            // Store user data in session for profile page
+            sessionStorage.setItem('userData', JSON.stringify(userData));
             
-            if (profileName) {
-                profileName.textContent = userData.displayName || 'User';
-            }
-            if (profileEmail) {
-                profileEmail.textContent = userData.email || '';
-            }
-            if (profilePhone) {
-                profilePhone.textContent = userData.phone || 'Not provided';
-            }
+            // Update profile page if it exists
+            updateProfilePage(userData);
         }
     } catch (error) {
         console.error('Error loading profile:', error);
+    }
+}
+
+// Update profile page with user data
+function updateProfilePage(userData) {
+    const profileName = document.getElementById('profileName');
+    const profileEmail = document.getElementById('profileEmail');
+    const profilePhone = document.getElementById('profilePhone');
+    const profileAvatar = document.querySelector('.avatar-image i');
+    
+    if (profileName) {
+        profileName.textContent = userData.displayName || 'User';
+    }
+    if (profileEmail) {
+        profileEmail.textContent = userData.email || '';
+    }
+    if (profilePhone) {
+        profilePhone.textContent = userData.phone || 'Not provided';
+    }
+    if (profileAvatar && userData.displayName) {
+        // Could add first letter of name as avatar
+        profileAvatar.style.fontSize = '2rem';
     }
 }
 
@@ -174,20 +222,56 @@ async function signupUser(userData) {
             displayName: `${firstName} ${lastName}`,
             role: 'user',
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            emailVerified: user.emailVerified
         });
         
-        // Show success message
-        showNotification('Account created successfully! Redirecting...', 'success');
+        // Send email verification
+        await user.sendEmailVerification({
+            url: window.location.origin + '/login.html',
+            handleCodeInApp: true
+        });
         
-        // Redirect after 2 seconds
+        showNotification('Account created successfully! Please check your email to verify your account.', 'success');
+        
+        // Redirect after 3 seconds
         setTimeout(() => {
             window.location.href = 'login.html';
-        }, 2000);
+        }, 3000);
         
         return user;
     } catch (error) {
         console.error('Signup error:', error);
+        showNotification(error.message, 'error');
+        throw error;
+    }
+}
+
+// Admin Login function
+async function adminLogin(email, password) {
+    try {
+        const userCredential = await auth.signInWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+        
+        // Check if user is admin
+        const userDoc = await db.collection('users').doc(user.uid).get();
+        
+        if (!userDoc.exists || userDoc.data().role !== 'admin') {
+            // Not an admin, sign out
+            await auth.signOut();
+            showNotification('Access denied. Admin privileges required.', 'error');
+            return false;
+        }
+        
+        showNotification('Admin login successful! Redirecting...', 'success');
+        
+        setTimeout(() => {
+            window.location.href = 'admin.html';
+        }, 2000);
+        
+        return true;
+    } catch (error) {
+        console.error('Admin login error:', error);
         showNotification(error.message, 'error');
         throw error;
     }
@@ -207,7 +291,6 @@ async function logoutUser() {
 
 // Show notification
 function showNotification(message, type = 'info') {
-    // Create notification element if it doesn't exist
     let notification = document.getElementById('notification');
     if (!notification) {
         notification = document.createElement('div');
@@ -240,7 +323,9 @@ function showNotification(message, type = 'info') {
     
     // Auto hide after 3 seconds
     setTimeout(() => {
-        notification.remove();
+        if (notification.parentNode) {
+            notification.remove();
+        }
     }, 3000);
 }
 
@@ -256,6 +341,28 @@ style.textContent = `
             transform: translateX(0);
             opacity: 1;
         }
+    }
+    
+    .logout-btn {
+        padding: 0.5rem 1rem;
+        background: var(--gray-100);
+        color: var(--gray-700);
+        border: none;
+        border-radius: var(--radius);
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.95rem;
+    }
+    
+    .logout-btn:hover {
+        background: var(--danger);
+        color: var(--white);
+    }
+    
+    .admin-link {
+        color: var(--primary) !important;
+        font-weight: 600;
     }
 `;
 document.head.appendChild(style);
