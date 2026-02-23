@@ -1,13 +1,10 @@
 // Authentication state observer
 auth.onAuthStateChanged(async (user) => {
-    const navLinks = document.querySelector('.nav-links');
-    const navIcons = document.querySelector('.nav-icons');
-    
     if (user) {
         // User is signed in
         console.log('User logged in:', user.email);
         
-        // Update navigation - remove login button, add user icon and logout
+        // Update navigation for logged in user
         updateNavigationForLoggedInUser(user);
         
         // Check if user is admin
@@ -37,12 +34,14 @@ function updateNavigationForLoggedInUser(user) {
     const wishlistIcon = document.createElement('i');
     wishlistIcon.className = 'fa-regular fa-heart';
     wishlistIcon.onclick = () => window.location.href = 'wishlist.html';
+    wishlistIcon.style.cursor = 'pointer';
     navIcons.appendChild(wishlistIcon);
     
-    // Add profile icon with user's initial or default
+    // Add profile icon
     const profileIcon = document.createElement('i');
     profileIcon.className = 'fa-regular fa-circle-user';
     profileIcon.onclick = () => window.location.href = 'profile.html';
+    profileIcon.style.cursor = 'pointer';
     navIcons.appendChild(profileIcon);
     
     // Add logout button
@@ -56,6 +55,7 @@ function updateNavigationForLoggedInUser(user) {
     const cartDiv = document.createElement('div');
     cartDiv.className = 'cart-badge';
     cartDiv.onclick = () => window.location.href = 'cart.html';
+    cartDiv.style.cursor = 'pointer';
     cartDiv.innerHTML = `
         <i class="fa-regular fa-cart-shopping"></i>
         <span>0</span>
@@ -82,6 +82,7 @@ function updateNavigationForLoggedOutUser() {
     const cartDiv = document.createElement('div');
     cartDiv.className = 'cart-badge';
     cartDiv.onclick = () => window.location.href = 'cart.html';
+    cartDiv.style.cursor = 'pointer';
     cartDiv.innerHTML = `
         <i class="fa-regular fa-cart-shopping"></i>
         <span>0</span>
@@ -147,6 +148,7 @@ function updateProfilePage(userData) {
     const profileEmail = document.getElementById('profileEmail');
     const profilePhone = document.getElementById('profilePhone');
     const profileAvatar = document.querySelector('.avatar-image i');
+    const memberSince = document.querySelector('.profile-avatar p');
     
     if (profileName) {
         profileName.textContent = userData.displayName || 'User';
@@ -156,6 +158,10 @@ function updateProfilePage(userData) {
     }
     if (profilePhone) {
         profilePhone.textContent = userData.phone || 'Not provided';
+    }
+    if (memberSince && userData.createdAt) {
+        const date = userData.createdAt.toDate ? userData.createdAt.toDate() : new Date();
+        memberSince.textContent = `Member since ${date.getFullYear()}`;
     }
     if (profileAvatar && userData.displayName) {
         // Could add first letter of name as avatar
@@ -329,7 +335,7 @@ function showNotification(message, type = 'info') {
     }, 3000);
 }
 
-// Add CSS animation
+// Add CSS animation and styles
 const style = document.createElement('style');
 style.textContent = `
     @keyframes slideIn {
