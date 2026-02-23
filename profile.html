@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ElectroTech - My Profile</title>
+  
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --primary-light: #60a5fa;
+      --primary-soft: #dbeafe;
+      --secondary: #0f172a;
+      --accent: #f59e0b;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --gray-900: #111827;
+      --gray-800: #1f2937;
+      --gray-700: #374151;
+      --gray-600: #4b5563;
+      --gray-500: #6b7280;
+      --gray-400: #9ca3af;
+      --gray-300: #d1d5db;
+      --gray-200: #e5e7eb;
+      --gray-100: #f3f4f6;
+      --gray-50: #f9fafb;
+      --white: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --shadow-md: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+      --shadow-xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+      --radius-sm: 0.375rem;
+      --radius: 0.5rem;
+      --radius-md: 0.75rem;
+      --radius-lg: 1rem;
+      --radius-xl: 1.5rem;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--gray-50);
+      color: var(--gray-900);
+      line-height: 1.5;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    /* Navigation */
+    .navbar {
+      background: var(--white);
+      padding: 1rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .navbar .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.75rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.5px;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      font-weight: 500;
+    }
+
+    .nav-links a {
+      color: var(--gray-700);
+      text-decoration: none;
+      transition: color 0.2s;
+      position: relative;
+    }
+
+    .nav-links a:after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--primary);
+      transition: width 0.2s;
+    }
+
+    .nav-links a:hover, .nav-links a.active {
+      color: var(--primary);
+    }
+
+    .nav-links a:hover:after, .nav-links a.active:after {
+      width: 100%;
+    }
+
+    .nav-icons {
+      display: flex;
+      gap: 1.25rem;
+      align-items: center;
+    }
+
+    .nav-icons i {
+      font-size: 1.25rem;
+      color: var(--gray-700);
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .nav-icons i:hover {
+      color: var(--primary);
+    }
+
+    .cart-badge {
+      position: relative;
+    }
+
+    .cart-badge span {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: var(--primary);
+      color: var(--white);
+      font-size: 0.65rem;
+      font-weight: 600;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Page Header */
+    .page-header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: var(--white);
+      padding: 2rem 0;
+    }
+
+    .page-header h1 {
+      font-size: 2rem;
+      font-weight: 800;
+    }
+
+    /* Profile Layout */
+    .profile-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 2rem;
+      padding: 3rem 0;
+    }
+
+    /* Profile Sidebar */
+    .profile-sidebar {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      box-shadow: var(--shadow-md);
+      height: fit-content;
+      position: sticky;
+      top: 90px;
+    }
+
+    .profile-avatar {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .avatar-image {
+      width: 120px;
+      height: 120px;
+      background: var(--primary-soft);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+      border: 4px solid var(--white);
+      box-shadow: var(--shadow-md);
+    }
+
+    .avatar-image i {
+      font-size: 3rem;
+      color: var(--primary);
+    }
+
+    .profile-avatar h3 {
+      font-size: 1.25rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .profile-avatar p {
+      color: var(--gray-600);
+      font-size: 0.875rem;
+    }
+
+    .profile-menu {
+      list-style: none;
+      border-top: 1px solid var(--gray-200);
+      padding-top: 1.5rem;
+    }
+
+    .profile-menu li {
+      margin-bottom: 0.5rem;
+    }
+
+    .profile-menu a {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      color: var(--gray-700);
+      text-decoration: none;
+      border-radius: var(--radius);
+      transition: all 0.2s;
+    }
+
+    .profile-menu a i {
+      width: 20px;
+      color: var(--gray-500);
+    }
+
+    .profile-menu a:hover, .profile-menu a.active {
+      background: var(--primary-soft);
+      color: var(--primary);
+    }
+
+    .profile-menu a:hover i, .profile-menu a.active i {
+      color: var(--primary);
+    }
+
+    .logout-btn {
+      margin-top: 1rem;
+      padding: 0.75rem 1rem;
+      background: var(--gray-100);
+      color: var(--danger) !important;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .logout-btn:hover {
+      background: #fee2e2;
+    }
+
+    /* Profile Content */
+    .profile-content {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      box-shadow: var(--shadow-md);
+    }
+
+    .content-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .content-header h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .edit-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: var(--primary-soft);
+      color: var(--primary);
+      border: none;
+      border-radius: var(--radius);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .edit-btn:hover {
+      background: var(--primary);
+      color: var(--white);
+    }
+
+    /* Info Grid */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .info-card {
+      background: var(--gray-50);
+      padding: 1.5rem;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--gray-200);
+    }
+
+    .info-card h3 {
+      font-size: 1.125rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .info-card h3 i {
+      color: var(--primary);
+    }
+
+    .info-row {
+      display: flex;
+      margin-bottom: 0.75rem;
+    }
+
+    .info-label {
+      width: 100px;
+      color: var(--gray-600);
+      font-size: 0.9rem;
+    }
+
+    .info-value {
+      flex: 1;
+      font-weight: 500;
+    }
+
+    /* Stats Cards */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: var(--gray-50);
+      padding: 1.5rem;
+      border-radius: var(--radius-lg);
+      text-align: center;
+      border: 1px solid var(--gray-200);
+    }
+
+    .stat-card i {
+      font-size: 2rem;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-card h4 {
+      font-size: 0.95rem;
+      color: var(--gray-600);
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-card .stat-value {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    /* Orders Table */
+    .orders-section h3 {
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .orders-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .orders-table th {
+      text-align: left;
+      padding: 1rem;
+      background: var(--gray-50);
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .orders-table td {
+      padding: 1rem;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .order-status {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 100px;
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+
+    .status-delivered {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .status-shipped {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
+    .status-processing {
+      background: #fed7aa;
+      color: #92400e;
+    }
+
+    .view-btn {
+      padding: 0.25rem 0.75rem;
+      background: var(--primary-soft);
+      color: var(--primary);
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 0.875rem;
+    }
+
+    .view-btn:hover {
+      background: var(--primary);
+      color: var(--white);
+    }
+
+    /* Form Styles */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+      color: var(--gray-700);
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 2px solid var(--gray-200);
+      border-radius: var(--radius);
+      font-size: 0.95rem;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .form-group input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px var(--primary-soft);
+    }
+
+    .form-group input:disabled {
+      background: var(--gray-50);
+      color: var(--gray-600);
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      font-weight: 600;
+      font-size: 0.95rem;
+      border-radius: var(--radius);
+      transition: all 0.2s;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: var(--white);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid var(--primary);
+      color: var(--primary);
+    }
+
+    .btn-outline:hover {
+      background: var(--primary-soft);
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: var(--white);
+    }
+
+    .btn-danger:hover {
+      background: #dc2626;
+    }
+
+    /* Success Message */
+    .success-message {
+      background: #d1fae5;
+      color: #065f46;
+      padding: 1rem;
+      border-radius: var(--radius);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Footer */
+    .footer {
+      background: var(--gray-900);
+      color: var(--gray-400);
+      padding: 5rem 0 2rem;
+      margin-top: 4rem;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 3rem;
+      margin-bottom: 4rem;
+    }
+
+    .footer-col h3 {
+      color: var(--white);
+      font-size: 1.125rem;
+      margin-bottom: 1.5rem;
+      font-weight: 600;
+    }
+
+    .footer-col p {
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+
+    .footer-col a {
+      display: block;
+      color: var(--gray-400);
+      margin-bottom: 0.75rem;
+      transition: color 0.2s;
+      text-decoration: none;
+    }
+
+    .footer-col a:hover {
+      color: var(--white);
+    }
+
+    .footer-col i {
+      width: 1.5rem;
+      margin-right: 0.5rem;
+      color: var(--primary-light);
+    }
+
+    .footer-bottom {
+      border-top: 1px solid var(--gray-800);
+      padding-top: 2rem;
+      text-align: center;
+      font-size: 0.875rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+
+      .profile-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .profile-sidebar {
+        position: static;
+      }
+
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .orders-table {
+        display: block;
+        overflow-x: auto;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="index.html" class="logo">ElectroTech</a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="store.html">Store</a>
+        <a href="contact.html">Contact</a>
+        <a href="profile.html" class="active">Profile</a>
+      </div>
+      <div class="nav-icons">
+        <i class="fa-regular fa-heart"></i>
+        <i class="fa-regular fa-user"></i>
+        <a href="login.html" style="color: inherit; text-decoration: none;"><i class="fa-regular fa-right-to-bracket"></i></a>
+        <div class="cart-badge">
+          <i class="fa-regular fa-cart-shopping"></i>
+          <span>3</span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <section class="page-header">
+    <div class="container">
+      <h1>My Profile</h1>
+    </div>
+  </section>
+
+  <!-- Profile Layout -->
+  <div class="container profile-layout">
+    <!-- Profile Sidebar -->
+    <aside class="profile-sidebar">
+      <div class="profile-avatar">
+        <div class="avatar-image">
+          <i class="fa-regular fa-circle-user"></i>
+        </div>
+        <h3>John Doe</h3>
+        <p>Member since 2024</p>
+      </div>
+
+      <ul class="profile-menu">
+        <li><a href="#" class="active" onclick="showSection('overview')"><i class="fa-regular fa-gauge"></i> Overview</a></li>
+        <li><a href="#" onclick="showSection('orders')"><i class="fa-regular fa-box"></i> My Orders</a></li>
+        <li><a href="#" onclick="showSection('wishlist')"><i class="fa-regular fa-heart"></i> Wishlist</a></li>
+        <li><a href="#" onclick="showSection('addresses')"><i class="fa-regular fa-location-dot"></i> Addresses</a></li>
+        <li><a href="#" onclick="showSection('profile')"><i class="fa-regular fa-user"></i> Profile Settings</a></li>
+        <li><a href="#" onclick="showSection('security')"><i class="fa-regular fa-lock"></i> Security</a></li>
+        <li><a href="#" onclick="showSection('payments')"><i class="fa-regular fa-credit-card"></i> Payment Methods</a></li>
+        <li><a href="#" onclick="showSection('notifications')"><i class="fa-regular fa-bell"></i> Notifications</a></li>
+      </ul>
+
+      <div class="logout-btn" onclick="logout()">
+        <i class="fa-regular fa-right-from-bracket"></i> Sign Out
+      </div>
+    </aside>
+
+    <!-- Profile Content -->
+    <div class="profile-content" id="profileContent">
+      <!-- Content will be dynamically loaded here -->
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div class="footer-col">
+        <h3>ElectroTech</h3>
+        <p>Your premier destination for cutting-edge electronics and smart technology solutions in Zambia.</p>
+      </div>
+
+      <div class="footer-col">
+        <h3>Quick Links</h3>
+        <a href="index.html">Home</a>
+        <a href="store.html">Shop</a>
+        <a href="contact.html">Contact</a>
+        <a href="profile.html">My Account</a>
+      </div>
+
+      <div class="footer-col">
+        <h3>Customer Service</h3>
+        <a href="#">Shipping Policy</a>
+        <a href="#">Returns & Refunds</a>
+        <a href="#">FAQs</a>
+        <a href="#">Support</a>
+      </div>
+
+      <div class="footer-col">
+        <h3>Contact Info</h3>
+        <p><i class="fa-regular fa-envelope"></i> support@electrotech.com</p>
+        <p><i class="fa-regular fa-phone"></i> +260 970 000000</p>
+        <p><i class="fa-regular fa-location-dot"></i> Lusaka, Zambia</p>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© 2026 ElectroTech. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Show overview section by default
+    document.addEventListener('DOMContentLoaded', function() {
+      showSection('overview');
+    });
+
+    function showSection(section) {
+      const content = document.getElementById('profileContent');
+      const menuItems = document.querySelectorAll('.profile-menu a');
+      
+      // Update active menu item
+      menuItems.forEach(item => item.classList.remove('active'));
+      event?.target?.classList.add('active');
+      
+      // Load content based on section
+      switch(section) {
+        case 'overview':
+          content.innerHTML = getOverviewHTML();
+          break;
+        case 'orders':
+          content.innerHTML = getOrdersHTML();
+          break;
+        case 'wishlist':
+          content.innerHTML = getWishlistHTML();
+          break;
+        case 'addresses':
+          content.innerHTML = getAddressesHTML();
+          break;
+        case 'profile':
+          content.innerHTML = getProfileSettingsHTML();
+          break;
+        case 'security':
+          content.innerHTML = getSecurityHTML();
+          break;
+        case 'payments':
+          content.innerHTML = getPaymentsHTML();
+          break;
+        case 'notifications':
+          content.innerHTML = getNotificationsHTML();
+          break;
+      }
+    }
+
+    function getOverviewHTML() {
+      return `
+        <div class="content-header">
+          <h2>Dashboard Overview</h2>
+          <button class="edit-btn" onclick="showSection('profile')">
+            <i class="fa-regular fa-pen-to-square"></i> Edit Profile
+          </button>
+        </div>
+
+        <!-- Success message for demo -->
+        <div class="success-message" id="welcomeMessage">
+          <i class="fa-regular fa-circle-check"></i>
+          <span>Welcome back, John! Here's your activity summary.</span>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <i class="fa-regular fa-box"></i>
+            <h4>Total Orders</h4>
+            <div class="stat-value">12</div>
+          </div>
+          <div class="stat-card">
+            <i class="fa-regular fa-clock"></i>
+            <h4>Pending</h4>
+            <div class="stat-value">2</div>
+          </div>
+          <div class="stat-card">
+            <i class="fa-regular fa-truck"></i>
+            <h4>Shipped</h4>
+            <div class="stat-value">1</div>
+          </div>
+          <div class="stat-card">
+            <i class="fa-regular fa-circle-check"></i>
+            <h4>Delivered</h4>
+            <div class="stat-value">9</div>
+          </div>
+        </div>
+
+        <!-- Info Grid -->
+        <div class="info-grid">
+          <div class="info-card">
+            <h3><i class="fa-regular fa-user"></i> Personal Info</h3>
+            <div class="info-row">
+              <span class="info-label">Name</span>
+              <span class="info-value">John Doe</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Email</span>
+              <span class="info-value">john.doe@example.com</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Phone</span>
+              <span class="info-value">+260 97 123 4567</span>
+            </div>
+          </div>
+
+          <div class="info-card">
+            <h3><i class="fa-regular fa-location-dot"></i> Default Address</h3>
+            <div class="info-row">
+              <span class="info-label">Address</span>
+              <span class="info-value">123 Cairo Road, Lusaka</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">City</span>
+              <span class="info-value">Lusaka</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Country</span>
+              <span class="info-value">Zambia</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Orders -->
+        <div class="orders-section">
+          <h3><i class="fa-regular fa-clock-rotate-left"></i> Recent Orders</h3>
+          <table class="orders-table">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Date</th>
+                <th>Items</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>#ORD-001</td>
+                <td>2024-01-15</td>
+                <td>3 items</td>
+                <td>K2,499</td>
+                <td><span class="order-status status-delivered">Delivered</span></td>
+                <td><button class="view-btn">View</button></td>
+              </tr>
+              <tr>
+                <td>#ORD-002</td>
+                <td>2024-01-20</td>
+                <td>1 item</td>
+                <td>K899</td>
+                <td><span class="order-status status-shipped">Shipped</span></td>
+                <td><button class="view-btn">View</button></td>
+              </tr>
+              <tr>
+                <td>#ORD-003</td>
+                <td>2024-01-22</td>
+                <td>2 items</td>
+                <td>K1,299</td>
+                <td><span class="order-status status-processing">Processing</span></td>
+                <td><button class="view-btn">View</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function getOrdersHTML() {
+      return `
+        <div class="content-header">
+          <h2>My Orders</h2>
+        </div>
+
+        <div class="orders-section">
+          <table class="orders-table">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Date</th>
+                <th>Items</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>#ORD-001</td>
+                <td>2024-01-15</td>
+                <td>3 items</td>
+                <td>K2,499</td>
+                <td><span class="order-status status-delivered">Delivered</span></td>
+                <td><button class="view-btn">View</button></td>
+              </tr>
+              <tr>
+                <td>#ORD-002</td>
+                <td>2024-01-20</td>
+                <td>1 item</td>
+                <td>K899</td>
+                <td><span class="order-status status-shipped">Shipped</span></td>
+                <td><button class="view-btn">View</button></td>
+              </tr>
+              <tr>
+                <td>#ORD-003</td>
+                <td>2024-01-22</td>
+                <td>2 items</td>
+                <td>K1,299</td>
+                <td><span class="order-status status-processing">Processing</span></td>
+                <td><button class="view-btn">View</button></td>
+              </tr>
+              <tr>
+                <td>#ORD-004</td>
+                <td>2024-01-10</td>
+                <td>5 items</td>
+                <td>K4,999</td>
+                <td><span class="order-status status-delivered">Delivered</span></td>
+                <td><button class="view-btn">View</button></td>
+              </tr>
+              <tr>
+                <td>#ORD-005</td>
+                <td>2024-01-05</td>
+                <td>2 items</td>
+                <td>K1,899</td>
+                <td><span class="order-status status-delivered">Delivered</span></td>
+                <td><button class="view-btn">View</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function getWishlistHTML() {
+      return `
+        <div class="content-header">
+          <h2>My Wishlist</h2>
+        </div>
+
+        <div class="product-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1.5rem;">
+          <div class="product-card" style="background: var(--gray-50); padding: 1rem; border-radius: var(--radius); text-align: center;">
+            <img src="https://images.unsplash.com/photo-1512499617640-c2f999098c01?auto=format&fit=crop&w=200&q=80" alt="Product" style="width: 100%; height: 150px; object-fit: contain;">
+            <h4 style="margin: 0.5rem 0;">Sony WH-1000XM4</h4>
+            <div class="price" style="color: var(--primary); font-weight: bold;">K1,299</div>
+            <button class="btn btn-primary" style="width: 100%; padding: 0.5rem; margin-top: 0.5rem;" onclick="alert('Added to cart!')">Add to Cart</button>
+          </div>
+
+          <div class="product-card" style="background: var(--gray-50); padding: 1rem; border-radius: var(--radius); text-align: center;">
+            <img src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=200&q=80" alt="Product" style="width: 100%; height: 150px; object-fit: contain;">
+            <h4 style="margin: 0.5rem 0;">Apple Watch Series 9</h4>
+            <div class="price" style="color: var(--primary); font-weight: bold;">K2,499</div>
+            <button class="btn btn-primary" style="width: 100%; padding: 0.5rem; margin-top: 0.5rem;" onclick="alert('Added to cart!')">Add to Cart</button>
+          </div>
+
+          <div class="product-card" style="background: var(--gray-50); padding: 1rem; border-radius: var(--radius); text-align: center;">
+            <img src="https://images.unsplash.com/photo-1580910051074-3eb694886505?auto=format&fit=crop&w=200&q=80" alt="Product" style="width: 100%; height: 150px; object-fit: contain;">
+            <h4 style="margin: 0.5rem 0;">ASUS ROG Strix</h4>
+            <div class="price" style="color: var(--primary); font-weight: bold;">K8,999</div>
+            <button class="btn btn-primary" style="width: 100%; padding: 0.5rem; margin-top: 0.5rem;" onclick="alert('Added to cart!')">Add to Cart</button>
+          </div>
+
+          <div class="product-card" style="background: var(--gray-50); padding: 1rem; border-radius: var(--radius); text-align: center;">
+            <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=200&q=80" alt="Product" style="width: 100%; height: 150px; object-fit: contain;">
+            <h4 style="margin: 0.5rem 0;">JBL Flip 6</h4>
+            <div class="price" style="color: var(--primary); font-weight: bold;">K599</div>
+            <button class="btn btn-primary" style="width: 100%; padding: 0.5rem; margin-top: 0.5rem;" onclick="alert('Added to cart!')">Add to Cart</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function getAddressesHTML() {
+      return `
+        <div class="content-header">
+          <h2>My Addresses</h2>
+          <button class="edit-btn" onclick="alert('Add new address')">
+            <i class="fa-regular fa-plus"></i> Add Address
+          </button>
+        </div>
+
+        <div class="info-grid">
+          <div class="info-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+              <h3><i class="fa-regular fa-location-dot"></i> Home Address</h3>
+              <span style="background: var(--primary-soft); color: var(--primary); padding: 0.25rem 0.75rem; border-radius: 100px; font-size: 0.75rem; font-weight: 600;">Default</span>
+            </div>
+            <p>John Doe</p>
+            <p>123 Cairo Road</p>
+            <p>Lusaka, Zambia</p>
+            <p>Phone: +260 97 123 4567</p>
+            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+              <button class="view-btn">Edit</button>
+              <button class="view-btn" style="color: var(--danger);" onclick="alert('Delete address?')">Delete</button>
+            </div>
+          </div>
+
+          <div class="info-card">
+            <h3><i class="fa-regular fa-briefcase"></i> Work Address</h3>
+            <p>John Doe</p>
+            <p>456 Independence Avenue</p>
+            <p>Lusaka, Zambia</p>
+            <p>Phone: +260 96 123 4567</p>
+            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+              <button class="view-btn">Edit</button>
+              <button class="view-btn" style="color: var(--danger);" onclick="alert('Delete address?')">Delete</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function getProfileSettingsHTML() {
+      return `
+        <div class="content-header">
+          <h2>Profile Settings</h2>
+        </div>
+
+        <div class="success-message" id="profileSuccess" style="display: none;">
+          <i class="fa-regular fa-circle-check"></i>
+          <span>Profile updated successfully!</span>
+        </div>
+
+        <form onsubmit="event.preventDefault(); updateProfile()">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="firstName">First Name</label>
+              <input type="text" id="firstName" value="John">
+            </div>
+            <div class="form-group">
+              <label for="lastName">Last Name</label>
+              <input type="text" id="lastName" value="Doe">
+            </div>
+            <div class="form-group">
+              <label for="email">Email Address</label>
+              <input type="email" id="email" value="john.doe@example.com">
+            </div>
+            <div class="form-group">
+              <label for="phone">Phone Number</label>
+              <input type="tel" id="phone" value="+260 97 123 4567">
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn btn-outline" onclick="resetProfile()">Cancel</button>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+          </div>
+        </form>
+      `;
+    }
+
+    function getSecurityHTML() {
+      return `
+        <div class="content-header">
+          <h2>Security Settings</h2>
+        </div>
+
+        <div class="success-message" id="securitySuccess" style="display: none;">
+          <i class="fa-regular fa-circle-check"></i>
+          <span>Password updated successfully!</span>
+        </div>
+
+        <form onsubmit="event.preventDefault(); updatePassword()">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="currentPassword">Current Password</label>
+              <input type="password" id="currentPassword" placeholder="••••••••">
+            </div>
+            <div class="form-group">
+              <label for="newPassword">New Password</label>
+              <input type="password" id="newPassword" placeholder="••••••••">
+            </div>
+            <div class="form-group">
+              <label for="confirmPassword">Confirm New Password</label>
+              <input type="password" id="confirmPassword" placeholder="••••••••">
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn btn-outline">Cancel</button>
+            <button type="submit" class="btn btn-primary">Update Password</button>
+          </div>
+        </form>
+
+        <div style="margin-top: 2rem; padding: 1.5rem; background: #fee2e2; border-radius: var(--radius);">
+          <h3 style="color: var(--danger); margin-bottom: 0.5rem;">Delete Account</h3>
+          <p style="color: var(--gray-600); margin-bottom: 1rem;">Once you delete your account, there is no going back. Please be certain.</p>
+          <button class="btn btn-danger" onclick="alert('Delete account? This cannot be undone!')">Delete Account</button>
+        </div>
+      `;
+    }
+
+    function getPaymentsHTML() {
+      return `
+        <div class="content-header">
+          <h2>Payment Methods</h2>
+          <button class="edit-btn" onclick="alert('Add payment method')">
+            <i class="fa-regular fa-plus"></i> Add Method
+          </button>
+        </div>
+
+        <div class="info-grid">
+          <div class="info-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+              <h3><i class="fa-regular fa-credit-card"></i> Credit Card</h3>
+              <span style="background: var(--primary-soft); color: var(--primary); padding: 0.25rem 0.75rem; border-radius: 100px; font-size: 0.75rem; font-weight: 600;">Default</span>
+            </div>
+            <p>•••• •••• •••• 4242</p>
+            <p>John Doe</p>
+            <p>Expires: 12/25</p>
+            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+              <button class="view-btn">Edit</button>
+              <button class="view-btn" style="color: var(--danger);">Remove</button>
+            </div>
+          </div>
+
+          <div class="info-card">
+            <h3><i class="fa-regular fa-mobile"></i> Mobile Money</h3>
+            <p>Airtel Money</p>
+            <p>+260 97 123 4567</p>
+            <p>John Doe</p>
+            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+              <button class="view-btn">Edit</button>
+              <button class="view-btn" style="color: var(--danger);">Remove</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function getNotificationsHTML() {
+      return `
+        <div class="content-header">
+          <h2>Notification Settings</h2>
+        </div>
+
+        <div class="info-card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <div>
+              <h4>Order Updates</h4>
+              <p style="color: var(--gray-600); font-size: 0.9rem;">Receive notifications about your orders</p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" checked>
+              <span class="slider round"></span>
+            </label>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <div>
+              <h4>Promotions & Deals</h4>
+              <p style="color: var(--gray-600); font-size: 0.9rem;">Receive special offers and discounts</p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" checked>
+              <span class="slider round"></span>
+            </label>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <div>
+              <h4>Newsletter</h4>
+              <p style="color: var(--gray-600); font-size: 0.9rem;">Receive weekly tech news and updates</p>
+            </div>
+            <label class="switch">
+              <input type="checkbox">
+              <span class="slider round"></span>
+            </label>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <h4>SMS Notifications</h4>
+              <p style="color: var(--gray-600); font-size: 0.9rem;">Get text messages for order updates</p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" checked>
+              <span class="slider round"></span>
+            </label>
+          </div>
+        </div>
+
+        <style>
+          .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+          }
+
+          .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+          }
+
+          .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--gray-300);
+            transition: .3s;
+            border-radius: 24px;
+          }
+
+          .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+          }
+
+          input:checked + .slider {
+            background-color: var(--primary);
+          }
+
+          input:checked + .slider:before {
+            transform: translateX(26px);
+          }
+        </style>
+      `;
+    }
+
+    function updateProfile() {
+      document.getElementById('profileSuccess').style.display = 'flex';
+      setTimeout(() => {
+        document.getElementById('profileSuccess').style.display = 'none';
+      }, 3000);
+    }
+
+    function resetProfile() {
+      document.getElementById('firstName').value = 'John';
+      document.getElementById('lastName').value = 'Doe';
+      document.getElementById('email').value = 'john.doe@example.com';
+      document.getElementById('phone').value = '+260 97 123 4567';
+    }
+
+    function updatePassword() {
+      const current = document.getElementById('currentPassword').value;
+      const newPass = document.getElementById('newPassword').value;
+      const confirm = document.getElementById('confirmPassword').value;
+
+      if (!current || !newPass || !confirm) {
+        alert('Please fill in all fields');
+        return;
+      }
+
+      if (newPass !== confirm) {
+        alert('New passwords do not match');
+        return;
+      }
+
+      document.getElementById('securitySuccess').style.display = 'flex';
+      setTimeout(() => {
+        document.getElementById('securitySuccess').style.display = 'none';
+      }, 3000);
+
+      // Clear form
+      document.getElementById('currentPassword').value = '';
+      document.getElementById('newPassword').value = '';
+      document.getElementById('confirmPassword').value = '';
+    }
+
+    function logout() {
+      if (confirm('Are you sure you want to sign out?')) {
+        window.location.href = 'index.html';
+      }
+    }
+
+    // Hide welcome message after 5 seconds
+    setTimeout(() => {
+      const welcomeMsg = document.getElementById('welcomeMessage');
+      if (welcomeMsg) {
+        welcomeMsg.style.display = 'none';
+      }
+    }, 5000);
+  </script>
+</body>
+</html>

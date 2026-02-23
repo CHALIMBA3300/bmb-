@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ElectroTech - Contact Us</title>
+  
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --primary-light: #60a5fa;
+      --primary-soft: #dbeafe;
+      --secondary: #0f172a;
+      --accent: #f59e0b;
+      --success: #10b981;
+      --danger: #ef4444;
+      --gray-900: #111827;
+      --gray-800: #1f2937;
+      --gray-700: #374151;
+      --gray-600: #4b5563;
+      --gray-500: #6b7280;
+      --gray-400: #9ca3af;
+      --gray-300: #d1d5db;
+      --gray-200: #e5e7eb;
+      --gray-100: #f3f4f6;
+      --gray-50: #f9fafb;
+      --white: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --shadow-md: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+      --shadow-xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+      --radius-sm: 0.375rem;
+      --radius: 0.5rem;
+      --radius-md: 0.75rem;
+      --radius-lg: 1rem;
+      --radius-xl: 1.5rem;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--gray-50);
+      color: var(--gray-900);
+      line-height: 1.5;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    /* Navigation */
+    .navbar {
+      background: var(--white);
+      padding: 1rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .navbar .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.75rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.5px;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      font-weight: 500;
+    }
+
+    .nav-links a {
+      color: var(--gray-700);
+      text-decoration: none;
+      transition: color 0.2s;
+      position: relative;
+    }
+
+    .nav-links a:after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--primary);
+      transition: width 0.2s;
+    }
+
+    .nav-links a:hover, .nav-links a.active {
+      color: var(--primary);
+    }
+
+    .nav-links a:hover:after, .nav-links a.active:after {
+      width: 100%;
+    }
+
+    .nav-icons {
+      display: flex;
+      gap: 1.25rem;
+      align-items: center;
+    }
+
+    .nav-icons i {
+      font-size: 1.25rem;
+      color: var(--gray-700);
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .nav-icons i:hover {
+      color: var(--primary);
+    }
+
+    .cart-badge {
+      position: relative;
+    }
+
+    .cart-badge span {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: var(--primary);
+      color: var(--white);
+      font-size: 0.65rem;
+      font-weight: 600;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Page Header */
+    .page-header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: var(--white);
+      padding: 3rem 0;
+      margin-bottom: 3rem;
+    }
+
+    .page-header h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+
+    .page-header p {
+      font-size: 1.125rem;
+      opacity: 0.9;
+    }
+
+    .breadcrumb {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .breadcrumb a {
+      color: var(--white);
+      text-decoration: none;
+      opacity: 0.8;
+      transition: opacity 0.2s;
+    }
+
+    .breadcrumb a:hover {
+      opacity: 1;
+    }
+
+    .breadcrumb span {
+      opacity: 0.6;
+    }
+
+    /* Contact Grid */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      gap: 3rem;
+      margin-bottom: 4rem;
+    }
+
+    /* Contact Info Cards */
+    .contact-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .info-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.3s;
+      border: 1px solid var(--gray-100);
+    }
+
+    .info-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--primary-light);
+    }
+
+    .info-icon {
+      width: 60px;
+      height: 60px;
+      background: rgba(37,99,235,0.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .info-icon i {
+      font-size: 1.75rem;
+      color: var(--primary);
+    }
+
+    .info-card h3 {
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+      font-weight: 600;
+    }
+
+    .info-card p {
+      color: var(--gray-600);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .info-card i {
+      color: var(--primary);
+      width: 20px;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .social-links a {
+      width: 40px;
+      height: 40px;
+      background: var(--gray-100);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      color: var(--gray-700);
+      text-decoration: none;
+    }
+
+    .social-links a:hover {
+      background: var(--primary);
+      color: var(--white);
+      transform: translateY(-3px);
+    }
+
+    /* Contact Form */
+    .contact-form-container {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem;
+      box-shadow: var(--shadow-md);
+    }
+
+    .contact-form-container h2 {
+      font-size: 1.75rem;
+      margin-bottom: 0.5rem;
+      font-weight: 700;
+    }
+
+    .contact-form-container > p {
+      color: var(--gray-600);
+      margin-bottom: 2rem;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      font-size: 0.95rem;
+      margin-bottom: 0.5rem;
+      color: var(--gray-700);
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      border: 2px solid var(--gray-200);
+      border-radius: var(--radius);
+      font-size: 1rem;
+      outline: none;
+      transition: all 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px var(--primary-soft);
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 1rem 2rem;
+      font-weight: 600;
+      font-size: 1rem;
+      border-radius: var(--radius);
+      transition: all 0.2s ease;
+      cursor: pointer;
+      border: none;
+      outline: none;
+      text-decoration: none;
+      width: 100%;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: var(--white);
+      box-shadow: var(--shadow);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    /* Map Section */
+    .map-section {
+      margin-bottom: 4rem;
+    }
+
+    .map-container {
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+      height: 400px;
+    }
+
+    .map-container iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* FAQ Section */
+    .faq-section {
+      margin-bottom: 4rem;
+    }
+
+    .faq-section h2 {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .faq-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 2rem;
+    }
+
+    .faq-item {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-100);
+    }
+
+    .faq-item h3 {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1.125rem;
+      margin-bottom: 1rem;
+    }
+
+    .faq-item h3 i {
+      color: var(--primary);
+      font-size: 1.25rem;
+    }
+
+    .faq-item p {
+      color: var(--gray-600);
+      line-height: 1.6;
+    }
+
+    /* Success Message */
+    .success-message {
+      background: #d1fae5;
+      color: #065f46;
+      padding: 1rem;
+      border-radius: var(--radius);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .success-message i {
+      color: #059669;
+    }
+
+    /* Footer */
+    .footer {
+      background: var(--gray-900);
+      color: var(--gray-400);
+      padding: 5rem 0 2rem;
+      margin-top: 2rem;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 3rem;
+      margin-bottom: 4rem;
+    }
+
+    .footer-col h3 {
+      color: var(--white);
+      font-size: 1.125rem;
+      margin-bottom: 1.5rem;
+      font-weight: 600;
+    }
+
+    .footer-col p {
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+
+    .footer-col a {
+      display: block;
+      color: var(--gray-400);
+      margin-bottom: 0.75rem;
+      transition: color 0.2s;
+      text-decoration: none;
+    }
+
+    .footer-col a:hover {
+      color: var(--white);
+    }
+
+    .footer-col i {
+      width: 1.5rem;
+      margin-right: 0.5rem;
+      color: var(--primary-light);
+    }
+
+    .footer-bottom {
+      border-top: 1px solid var(--gray-800);
+      padding-top: 2rem;
+      text-align: center;
+      font-size: 0.875rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+
+      .contact-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .faq-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .page-header h1 {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="index.html" class="logo">ElectroTech</a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="store.html">Store</a>
+        <a href="contact.html" class="active">Contact</a>
+        <a href="profile.html">Profile</a>
+      </div>
+      <div class="nav-icons">
+        <i class="fa-regular fa-heart"></i>
+        <i class="fa-regular fa-user"></i>
+        <a href="login.html" style="color: inherit; text-decoration: none;"><i class="fa-regular fa-right-to-bracket"></i></a>
+        <div class="cart-badge">
+          <i class="fa-regular fa-cart-shopping"></i>
+          <span>3</span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <section class="page-header">
+    <div class="container">
+      <h1>Contact Us</h1>
+      <p>We're here to help with any questions or concerns</p>
+      <div class="breadcrumb">
+        <a href="index.html">Home</a>
+        <span>/</span>
+        <span>Contact</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Grid -->
+  <div class="container">
+    <div class="contact-grid">
+      <!-- Contact Info -->
+      <div class="contact-info">
+        <div class="info-card">
+          <div class="info-icon">
+            <i class="fa-regular fa-location-dot"></i>
+          </div>
+          <h3>Visit Us</h3>
+          <p><i class="fa-regular fa-building"></i> Shop No. 15, Cairo Road</p>
+          <p><i class="fa-regular fa-map"></i> Lusaka, Zambia</p>
+          <p><i class="fa-regular fa-clock"></i> Mon-Fri: 8:00 - 17:00</p>
+          <p><i class="fa-regular fa-clock"></i> Sat: 9:00 - 13:00</p>
+        </div>
+
+        <div class="info-card">
+          <div class="info-icon">
+            <i class="fa-regular fa-phone"></i>
+          </div>
+          <h3>Call Us</h3>
+          <p><i class="fa-regular fa-phone"></i> +260 97 000 0000</p>
+          <p><i class="fa-regular fa-phone"></i> +260 96 000 0000</p>
+          <p><i class="fa-regular fa-clock"></i> Available 24/7</p>
+        </div>
+
+        <div class="info-card">
+          <div class="info-icon">
+            <i class="fa-regular fa-envelope"></i>
+          </div>
+          <h3>Email Us</h3>
+          <p><i class="fa-regular fa-envelope"></i> support@electrotech.com</p>
+          <p><i class="fa-regular fa-envelope"></i> sales@electrotech.com</p>
+          <p><i class="fa-regular fa-clock"></i> Response within 24h</p>
+        </div>
+
+        <div class="info-card">
+          <div class="info-icon">
+            <i class="fa-regular fa-globe"></i>
+          </div>
+          <h3>Follow Us</h3>
+          <p>Stay connected on social media</p>
+          <div class="social-links">
+            <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+            <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+            <a href="#"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+            <a href="#"><i class="fa-brands fa-youtube"></i></a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact Form -->
+      <div class="contact-form-container">
+        <h2>Send us a Message</h2>
+        <p>We'll get back to you as soon as possible</p>
+
+        <!-- Success message (hidden by default) -->
+        <div class="success-message" id="successMessage" style="display: none;">
+          <i class="fa-regular fa-circle-check"></i>
+          <span>Message sent successfully! We'll respond within 24 hours.</span>
+        </div>
+
+        <form id="contactForm" onsubmit="event.preventDefault(); handleSubmit()">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="firstName">First Name *</label>
+              <input type="text" id="firstName" placeholder="John" required>
+            </div>
+            <div class="form-group">
+              <label for="lastName">Last Name *</label>
+              <input type="text" id="lastName" placeholder="Doe" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email Address *</label>
+            <input type="email" id="email" placeholder="you@example.com" required>
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" placeholder="+260 97 000 0000">
+          </div>
+
+          <div class="form-group">
+            <label for="subject">Subject *</label>
+            <select id="subject" required>
+              <option value="">Select a subject</option>
+              <option value="general">General Inquiry</option>
+              <option value="support">Technical Support</option>
+              <option value="sales">Sales Question</option>
+              <option value="returns">Returns & Refunds</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="message">Message *</label>
+            <textarea id="message" placeholder="How can we help you?" required></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary">
+            <i class="fa-regular fa-paper-plane"></i> Send Message
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Map Section -->
+    <section class="map-section">
+      <div class="map-container">
+        <iframe 
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12345.67890!2d28.283333!3d-15.416667!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTXCsDI1JzAwLjAiUyAyOMKwMTcnMDAuMCJF!5e0!3m2!1sen!2szm!4v1234567890"
+          allowfullscreen=""
+          loading="lazy">
+        </iframe>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h3><i class="fa-regular fa-circle-question"></i> How long does delivery take?</h3>
+          <p>Delivery typically takes 2-5 business days within Lusaka, and 5-7 business days to other parts of Zambia.</p>
+        </div>
+
+        <div class="faq-item">
+          <h3><i class="fa-regular fa-circle-question"></i> What is your return policy?</h3>
+          <p>We offer a 30-day return policy for most items. Products must be in original condition with packaging.</p>
+        </div>
+
+        <div class="faq-item">
+          <h3><i class="fa-regular fa-circle-question"></i> Do you offer warranty?</h3>
+          <p>Yes, all products come with a minimum 1-year manufacturer warranty. Extended warranties available on select items.</p>
+        </div>
+
+        <div class="faq-item">
+          <h3><i class="fa-regular fa-circle-question"></i> What payment methods do you accept?</h3>
+          <p>We accept cash on delivery, mobile money (Airtel Money, MTN Money), and bank transfers.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div class="footer-col">
+        <h3>ElectroTech</h3>
+        <p>Your premier destination for cutting-edge electronics and smart technology solutions in Zambia.</p>
+      </div>
+
+      <div class="footer-col">
+        <h3>Quick Links</h3>
+        <a href="index.html">Home</a>
+        <a href="store.html">Shop</a>
+        <a href="contact.html">Contact</a>
+        <a href="profile.html">My Account</a>
+      </div>
+
+      <div class="footer-col">
+        <h3>Customer Service</h3>
+        <a href="#">Shipping Policy</a>
+        <a href="#">Returns & Refunds</a>
+        <a href="#">FAQs</a>
+        <a href="#">Support</a>
+      </div>
+
+      <div class="footer-col">
+        <h3>Contact Info</h3>
+        <p><i class="fa-regular fa-envelope"></i> support@electrotech.com</p>
+        <p><i class="fa-regular fa-phone"></i> +260 970 000000</p>
+        <p><i class="fa-regular fa-location-dot"></i> Lusaka, Zambia</p>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© 2026 ElectroTech. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    function handleSubmit() {
+      const firstName = document.getElementById('firstName').value;
+      const lastName = document.getElementById('lastName').value;
+      const email = document.getElementById('email').value;
+      const subject = document.getElementById('subject').value;
+      const message = document.getElementById('message').value;
+      
+      // Simple validation
+      if (!firstName || !lastName || !email || !subject || !message) {
+        alert('Please fill in all required fields');
+        return;
+      }
+      
+      // Show success message
+      document.getElementById('successMessage').style.display = 'flex';
+      
+      // Reset form
+      document.getElementById('contactForm').reset();
+      
+      // Hide success message after 5 seconds
+      setTimeout(() => {
+        document.getElementById('successMessage').style.display = 'none';
+      }, 5000);
+    }
+  </script>
+</body>
+</html>
