@@ -11,6 +11,12 @@
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
   
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
+  
   <style>
     * {
       margin: 0;
@@ -142,8 +148,19 @@
       color: var(--primary);
     }
 
+    .nav-icons a {
+      color: var(--gray-700);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .nav-icons a:hover {
+      color: var(--primary);
+    }
+
     .cart-badge {
       position: relative;
+      cursor: pointer;
     }
 
     .cart-badge span {
@@ -160,6 +177,31 @@
       display: flex;
       align-items: center;
       justify-content: center;
+    }
+
+    .logout-btn {
+      padding: 0.5rem 1rem;
+      background: var(--gray-100);
+      color: var(--gray-700);
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .logout-btn:hover {
+      background: var(--danger);
+      color: var(--white);
+    }
+
+    .admin-link {
+      color: var(--primary) !important;
+      font-weight: 600;
     }
 
     /* Hero Section */
@@ -571,6 +613,31 @@
       box-shadow: var(--shadow-lg);
     }
 
+    /* Notification */
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 20px;
+      border-radius: 8px;
+      color: white;
+      font-weight: 500;
+      z-index: 9999;
+      animation: slideIn 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
     /* Footer */
     .footer {
       background: var(--gray-900);
@@ -751,14 +818,8 @@
         <a href="contact.html">Contact</a>
         <a href="profile.html">Profile</a>
       </div>
-      <div class="nav-icons">
-        <i class="fa-regular fa-heart"></i>
-        <i class="fa-regular fa-user"></i>
-        <a href="login.html" style="color: inherit; text-decoration: none;"><i class="fa-regular fa-right-to-bracket"></i></a>
-        <div class="cart-badge">
-          <i class="fa-regular fa-cart-shopping"></i>
-          <span>3</span>
-        </div>
+      <div class="nav-icons" id="navIcons">
+        <!-- Icons will be dynamically populated by auth.js -->
       </div>
     </div>
   </nav>
@@ -859,65 +920,12 @@
   <section class="products" id="deals">
     <div class="container">
       <h2 class="section-title">Featured Products</h2>
-      <div class="product-grid">
-        <a href="product.html?id=1" class="product-card">
-          <span class="product-badge">Best Seller</span>
-          <img src="https://images.unsplash.com/photo-1512499617640-c2f999098c01?auto=format&fit=crop&w=500&q=80" alt="Wireless Headphones">
-          <h4>Sony WH-1000XM4</h4>
-          <div class="product-rating">
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star-half-alt"></i>
-            <span>(128 reviews)</span>
-          </div>
-          <div class="price">
-            K1,299 <del>K1,999</del>
-          </div>
-          <button class="btn btn-primary" onclick="event.preventDefault(); alert('Added to cart!')">
-            <i class="fa-regular fa-cart-plus"></i> Add to Cart
-          </button>
-        </a>
-
-        <a href="product.html?id=2" class="product-card">
-          <span class="product-badge" style="background: var(--primary);">New</span>
-          <img src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=500&q=80" alt="Smart Watch">
-          <h4>Apple Watch Series 9</h4>
-          <div class="product-rating">
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star"></i>
-            <span>(256 reviews)</span>
-          </div>
-          <div class="price">
-            K2,499 <del>K3,299</del>
-          </div>
-          <button class="btn btn-primary" onclick="event.preventDefault(); alert('Added to cart!')">
-            <i class="fa-regular fa-cart-plus"></i> Add to Cart
-          </button>
-        </a>
-
-        <a href="product.html?id=3" class="product-card">
-          <img src="https://images.unsplash.com/photo-1580910051074-3eb694886505?auto=format&fit=crop&w=500&q=80" alt="Gaming Laptop">
-          <h4>ASUS ROG Strix G16</h4>
-          <div class="product-rating">
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-regular fa-star"></i>
-            <span>(89 reviews)</span>
-          </div>
-          <div class="price">
-            K8,999 <del>K11,999</del>
-          </div>
-          <button class="btn btn-primary" onclick="event.preventDefault(); alert('Added to cart!')">
-            <i class="fa-regular fa-cart-plus"></i> Add to Cart
-          </button>
-        </a>
+      <div class="product-grid" id="featuredProducts">
+        <!-- Products will be loaded dynamically -->
+        <div class="loading" style="text-align: center; grid-column: 1/-1;">
+          <i class="fa-regular fa-spinner fa-spin"></i>
+          <p>Loading products...</p>
+        </div>
       </div>
     </div>
   </section>
@@ -927,8 +935,8 @@
     <div class="newsletter-content">
       <h2>Stay in the Loop</h2>
       <p>Subscribe to get exclusive offers, early access to sales, and tech tips straight to your inbox.</p>
-      <form class="newsletter-form" onsubmit="event.preventDefault(); alert('Subscribed!');">
-        <input type="email" placeholder="Enter your email address" required>
+      <form class="newsletter-form" onsubmit="event.preventDefault(); subscribeNewsletter()">
+        <input type="email" id="newsletterEmail" placeholder="Enter your email address" required>
         <button type="submit">Subscribe</button>
       </form>
     </div>
@@ -977,5 +985,300 @@
       <p>© 2026 ElectroTech. All Rights Reserved.</p>
     </div>
   </footer>
+
+  <!-- Firebase Config -->
+  <script src="firebase-config.js"></script>
+  <script src="auth.js"></script>
+
+  <script>
+    // Load featured products
+    async function loadFeaturedProducts() {
+      try {
+        const snapshot = await db.collection('products')
+          .where('isFeatured', '==', true)
+          .limit(6)
+          .get();
+
+        const products = [];
+        snapshot.forEach(doc => {
+          products.push({
+            id: doc.id,
+            ...doc.data()
+          });
+        });
+
+        displayFeaturedProducts(products);
+      } catch (error) {
+        console.error('Error loading featured products:', error);
+        document.getElementById('featuredProducts').innerHTML = `
+          <div class="no-products" style="text-align: center; grid-column: 1/-1;">
+            <p>Error loading products. Please refresh the page.</p>
+          </div>
+        `;
+      }
+    }
+
+    // Display featured products
+    function displayFeaturedProducts(products) {
+      const grid = document.getElementById('featuredProducts');
+      
+      if (products.length === 0) {
+        // Load some default products if no featured products exist
+        loadDefaultProducts();
+        return;
+      }
+
+      let html = '';
+      products.forEach(product => {
+        const rating = product.rating || 0;
+        const fullStars = Math.floor(rating);
+        const halfStar = rating % 1 >= 0.5;
+        
+        let stars = '';
+        for (let i = 0; i < fullStars; i++) {
+          stars += '<i class="fa-solid fa-star"></i>';
+        }
+        if (halfStar) {
+          stars += '<i class="fa-solid fa-star-half-alt"></i>';
+        }
+        for (let i = 0; i < 5 - Math.ceil(rating); i++) {
+          stars += '<i class="fa-regular fa-star"></i>';
+        }
+
+        html += `
+          <div class="product-card" data-id="${product.id}">
+            ${product.oldPrice ? `<span class="product-badge">-${Math.round((1 - product.price/product.oldPrice) * 100)}%</span>` : ''}
+            ${product.isNew ? `<span class="product-badge" style="background: var(--primary);">New</span>` : ''}
+            <img src="${product.imageUrl || 'https://images.unsplash.com/photo-1512499617640-c2f999098c01?auto=format&fit=crop&w=500&q=80'}" 
+                 alt="${product.name}"
+                 onerror="this.src='https://via.placeholder.com/300x200?text=No+Image'">
+            <h4>${product.name}</h4>
+            <div class="product-rating">
+              ${stars}
+              <span>(${product.reviews || 0})</span>
+            </div>
+            <div class="price">
+              K${product.price.toLocaleString()}
+              ${product.oldPrice ? `<del>K${product.oldPrice.toLocaleString()}</del>` : ''}
+            </div>
+            <button class="btn btn-primary" onclick="addToCart('${product.id}')">
+              <i class="fa-regular fa-cart-plus"></i> Add to Cart
+            </button>
+          </div>
+        `;
+      });
+
+      grid.innerHTML = html;
+    }
+
+    // Load default products if no featured products exist
+    async function loadDefaultProducts() {
+      try {
+        const snapshot = await db.collection('products').limit(6).get();
+        const products = [];
+        snapshot.forEach(doc => {
+          products.push({
+            id: doc.id,
+            ...doc.data()
+          });
+        });
+
+        if (products.length > 0) {
+          displayFeaturedProducts(products);
+        } else {
+          // Show placeholder products
+          document.getElementById('featuredProducts').innerHTML = `
+            <div class="product-card">
+              <span class="product-badge">Best Seller</span>
+              <img src="https://images.unsplash.com/photo-1512499617640-c2f999098c01?auto=format&fit=crop&w=500&q=80" alt="Wireless Headphones">
+              <h4>Sony WH-1000XM4</h4>
+              <div class="product-rating">
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star-half-alt"></i>
+                <span>(128 reviews)</span>
+              </div>
+              <div class="price">
+                K1,299 <del>K1,999</del>
+              </div>
+              <button class="btn btn-primary" onclick="event.preventDefault(); alert('Please login to add items to cart')">
+                <i class="fa-regular fa-cart-plus"></i> Add to Cart
+              </button>
+            </div>
+
+            <div class="product-card">
+              <span class="product-badge" style="background: var(--primary);">New</span>
+              <img src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=500&q=80" alt="Smart Watch">
+              <h4>Apple Watch Series 9</h4>
+              <div class="product-rating">
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <span>(256 reviews)</span>
+              </div>
+              <div class="price">
+                K2,499 <del>K3,299</del>
+              </div>
+              <button class="btn btn-primary" onclick="event.preventDefault(); alert('Please login to add items to cart')">
+                <i class="fa-regular fa-cart-plus"></i> Add to Cart
+              </button>
+            </div>
+
+            <div class="product-card">
+              <img src="https://images.unsplash.com/photo-1580910051074-3eb694886505?auto=format&fit=crop&w=500&q=80" alt="Gaming Laptop">
+              <h4>ASUS ROG Strix G16</h4>
+              <div class="product-rating">
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-regular fa-star"></i>
+                <span>(89 reviews)</span>
+              </div>
+              <div class="price">
+                K8,999 <del>K11,999</del>
+              </div>
+              <button class="btn btn-primary" onclick="event.preventDefault(); alert('Please login to add items to cart')">
+                <i class="fa-regular fa-cart-plus"></i> Add to Cart
+              </button>
+            </div>
+          `;
+        }
+      } catch (error) {
+        console.error('Error loading default products:', error);
+      }
+    }
+
+    // Add to cart function
+    async function addToCart(productId) {
+      const user = auth.currentUser;
+      
+      if (!user) {
+        showNotification('Please login to add items to cart', 'error');
+        setTimeout(() => {
+          window.location.href = 'login.html';
+        }, 2000);
+        return;
+      }
+
+      try {
+        // Get product details
+        const productDoc = await db.collection('products').doc(productId).get();
+        if (!productDoc.exists) {
+          showNotification('Product not found', 'error');
+          return;
+        }
+
+        const product = productDoc.data();
+
+        // Check if product is in stock
+        if (product.stock <= 0) {
+          showNotification('Product is out of stock', 'error');
+          return;
+        }
+
+        const cartRef = db.collection('carts').doc(user.uid).collection('items').doc(productId);
+        const cartItem = await cartRef.get();
+        
+        if (cartItem.exists) {
+          // Check if adding more would exceed stock
+          const newQuantity = cartItem.data().quantity + 1;
+          if (newQuantity > product.stock) {
+            showNotification('Not enough stock available', 'error');
+            return;
+          }
+
+          await cartRef.update({
+            quantity: firebase.firestore.FieldValue.increment(1),
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+        } else {
+          await cartRef.set({
+            productId,
+            name: product.name,
+            price: product.price,
+            quantity: 1,
+            imageUrl: product.imageUrl || '',
+            addedAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+        }
+
+        // Update cart badge
+        const cartSnapshot = await db.collection('carts').doc(user.uid).collection('items').get();
+        const cartBadge = document.querySelector('.cart-badge span');
+        if (cartBadge) {
+          cartBadge.textContent = cartSnapshot.size;
+        }
+
+        showNotification('Product added to cart!', 'success');
+      } catch (error) {
+        console.error('Error adding to cart:', error);
+        showNotification('Error adding to cart', 'error');
+      }
+    }
+
+    // Show notification
+    function showNotification(message, type = 'info') {
+      const notification = document.createElement('div');
+      notification.className = 'notification';
+      notification.style.backgroundColor = type === 'success' ? '#10b981' : 
+                                         type === 'error' ? '#ef4444' : '#3b82f6';
+      notification.textContent = message;
+      document.body.appendChild(notification);
+
+      setTimeout(() => {
+        notification.remove();
+      }, 3000);
+    }
+
+    // Newsletter subscription
+    async function subscribeNewsletter() {
+      const email = document.getElementById('newsletterEmail').value;
+      
+      if (!email) {
+        showNotification('Please enter your email', 'error');
+        return;
+      }
+
+      try {
+        // Save to Firestore
+        await db.collection('newsletter').add({
+          email: email,
+          subscribedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        showNotification('Successfully subscribed to newsletter!', 'success');
+        document.getElementById('newsletterEmail').value = '';
+      } catch (error) {
+        console.error('Error subscribing to newsletter:', error);
+        showNotification('Error subscribing. Please try again.', 'error');
+      }
+    }
+
+    // Load featured products on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      loadFeaturedProducts();
+    });
+
+    // Add CSS for notification
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes slideIn {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
 </body>
 </html>
