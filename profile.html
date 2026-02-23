@@ -11,6 +11,11 @@
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
   
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+  
   <style>
     * {
       margin: 0;
@@ -243,6 +248,7 @@
       text-decoration: none;
       border-radius: var(--radius);
       transition: all 0.2s;
+      cursor: pointer;
     }
 
     .profile-menu a i {
@@ -267,6 +273,7 @@
       border-radius: var(--radius);
       cursor: pointer;
       transition: all 0.2s;
+      text-align: center;
     }
 
     .logout-btn:hover {
@@ -426,20 +433,9 @@
       font-weight: 600;
     }
 
-    .status-delivered {
-      background: #d1fae5;
-      color: #065f46;
-    }
-
-    .status-shipped {
-      background: #dbeafe;
-      color: #1e40af;
-    }
-
-    .status-processing {
-      background: #fed7aa;
-      color: #92400e;
-    }
+    .status-delivered { background: #d1fae5; color: #065f46; }
+    .status-shipped { background: #dbeafe; color: #1e40af; }
+    .status-processing { background: #fed7aa; color: #92400e; }
 
     .view-btn {
       padding: 0.25rem 0.75rem;
@@ -617,19 +613,6 @@
       .profile-sidebar {
         position: static;
       }
-
-      .info-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .orders-table {
-        display: block;
-        overflow-x: auto;
-      }
-
-      .form-grid {
-        grid-template-columns: 1fr;
-      }
     }
   </style>
 </head>
@@ -645,13 +628,7 @@
         <a href="profile.html" class="active">Profile</a>
       </div>
       <div class="nav-icons">
-        <i class="fa-regular fa-heart"></i>
-        <i class="fa-regular fa-user"></i>
-        <a href="login.html" style="color: inherit; text-decoration: none;"><i class="fa-regular fa-right-to-bracket"></i></a>
-        <div class="cart-badge">
-          <i class="fa-regular fa-cart-shopping"></i>
-          <span>3</span>
-        </div>
+        <!-- Will be populated by auth.js -->
       </div>
     </div>
   </nav>
@@ -671,29 +648,30 @@
         <div class="avatar-image">
           <i class="fa-regular fa-circle-user"></i>
         </div>
-        <h3>John Doe</h3>
-        <p>Member since 2024</p>
+        <h3 id="profileName">Loading...</h3>
+        <p id="profileMemberSince">Member since 2024</p>
       </div>
 
       <ul class="profile-menu">
-        <li><a href="#" class="active" onclick="showSection('overview')"><i class="fa-regular fa-gauge"></i> Overview</a></li>
-        <li><a href="#" onclick="showSection('orders')"><i class="fa-regular fa-box"></i> My Orders</a></li>
-        <li><a href="#" onclick="showSection('wishlist')"><i class="fa-regular fa-heart"></i> Wishlist</a></li>
-        <li><a href="#" onclick="showSection('addresses')"><i class="fa-regular fa-location-dot"></i> Addresses</a></li>
-        <li><a href="#" onclick="showSection('profile')"><i class="fa-regular fa-user"></i> Profile Settings</a></li>
-        <li><a href="#" onclick="showSection('security')"><i class="fa-regular fa-lock"></i> Security</a></li>
-        <li><a href="#" onclick="showSection('payments')"><i class="fa-regular fa-credit-card"></i> Payment Methods</a></li>
-        <li><a href="#" onclick="showSection('notifications')"><i class="fa-regular fa-bell"></i> Notifications</a></li>
+        <li><a onclick="showSection('overview')" class="active"><i class="fa-regular fa-gauge"></i> Overview</a></li>
+        <li><a onclick="showSection('orders')"><i class="fa-regular fa-box"></i> My Orders</a></li>
+        <li><a onclick="showSection('wishlist')"><i class="fa-regular fa-heart"></i> Wishlist</a></li>
+        <li><a onclick="showSection('addresses')"><i class="fa-regular fa-location-dot"></i> Addresses</a></li>
+        <li><a onclick="showSection('profile')"><i class="fa-regular fa-user"></i> Profile Settings</a></li>
+        <li><a onclick="showSection('security')"><i class="fa-regular fa-lock"></i> Security</a></li>
       </ul>
 
-      <div class="logout-btn" onclick="logout()">
+      <div class="logout-btn" onclick="logoutUser()">
         <i class="fa-regular fa-right-from-bracket"></i> Sign Out
       </div>
     </aside>
 
     <!-- Profile Content -->
     <div class="profile-content" id="profileContent">
-      <!-- Content will be dynamically loaded here -->
+      <div class="loading">
+        <i class="fa-regular fa-spinner fa-spin"></i>
+        <p>Loading profile...</p>
+      </div>
     </div>
   </div>
 
@@ -734,33 +712,71 @@
     </div>
   </footer>
 
+  <!-- Firebase Config -->
+  <script src="firebase-config.js"></script>
+  <script src="auth.js"></script>
+
   <script>
-    // Show overview section by default
-    document.addEventListener('DOMContentLoaded', function() {
+    let currentUserData = null;
+
+    // Load user data on page load
+    document.addEventListener('DOMContentLoaded', async function() {
+      const user = auth.currentUser;
+      
+      if (!user) {
+        window.location.href = 'login.html';
+        return;
+      }
+      
+      await loadUserProfileData(user.uid);
       showSection('overview');
     });
 
+    // Load user profile data from Firestore
+    async function loadUserProfileData(uid) {
+      try {
+        const userDoc = await db.collection('users').doc(uid).get();
+        
+        if (userDoc.exists) {
+          currentUserData = userDoc.data();
+          
+          // Update sidebar
+          document.getElementById('profileName').textContent = currentUserData.displayName || 'User';
+          const joinDate = currentUserData.createdAt ? 
+            new Date(currentUserData.createdAt.toDate()).getFullYear() : '2024';
+          document.getElementById('profileMemberSince').textContent = `Member since ${joinDate}`;
+        }
+      } catch (error) {
+        console.error('Error loading user data:', error);
+        showNotification('Error loading profile data', 'error');
+      }
+    }
+
+    // Show different sections
     function showSection(section) {
       const content = document.getElementById('profileContent');
       const menuItems = document.querySelectorAll('.profile-menu a');
       
-      // Update active menu item
+      // Update active menu
       menuItems.forEach(item => item.classList.remove('active'));
-      event?.target?.classList.add('active');
+      event.target.closest('a').classList.add('active');
       
       // Load content based on section
       switch(section) {
         case 'overview':
           content.innerHTML = getOverviewHTML();
+          loadUserOrders();
           break;
         case 'orders':
           content.innerHTML = getOrdersHTML();
+          loadUserOrders();
           break;
         case 'wishlist':
           content.innerHTML = getWishlistHTML();
           break;
         case 'addresses':
           content.innerHTML = getAddressesHTML();
+          loadUserAddresses();
           break;
         case 'profile':
           content.innerHTML = getProfileSettingsHTML();
@@ -768,16 +784,15 @@
         case 'security':
           content.innerHTML = getSecurityHTML();
           break;
-        case 'payments':
-          content.innerHTML = getPaymentsHTML();
-          break;
-        case 'notifications':
-          content.innerHTML = getNotificationsHTML();
-          break;
       }
     }
 
+    // Overview HTML
     function getOverviewHTML() {
+      const user = currentUserData || {};
+      const joinDate = user.createdAt ? 
+        new Date(user.createdAt.toDate()).toLocaleDateString() : 'N/A';
+      
       return `
         <div class="content-header">
           <h2>Dashboard Overview</h2>
@@ -786,116 +801,78 @@
           </button>
         </div>
 
-        <!-- Success message for demo -->
         <div class="success-message" id="welcomeMessage">
           <i class="fa-regular fa-circle-check"></i>
-          <span>Welcome back, John! Here's your activity summary.</span>
+          <span>Welcome back, ${user.firstName || 'User'}!</span>
         </div>
 
-        <!-- Stats Cards -->
         <div class="stats-grid">
           <div class="stat-card">
             <i class="fa-regular fa-box"></i>
             <h4>Total Orders</h4>
-            <div class="stat-value">12</div>
+            <div class="stat-value" id="totalOrders">0</div>
           </div>
           <div class="stat-card">
             <i class="fa-regular fa-clock"></i>
             <h4>Pending</h4>
-            <div class="stat-value">2</div>
+            <div class="stat-value" id="pendingOrders">0</div>
           </div>
           <div class="stat-card">
             <i class="fa-regular fa-truck"></i>
             <h4>Shipped</h4>
-            <div class="stat-value">1</div>
+            <div class="stat-value" id="shippedOrders">0</div>
           </div>
           <div class="stat-card">
             <i class="fa-regular fa-circle-check"></i>
             <h4>Delivered</h4>
-            <div class="stat-value">9</div>
+            <div class="stat-value" id="deliveredOrders">0</div>
           </div>
         </div>
 
-        <!-- Info Grid -->
         <div class="info-grid">
           <div class="info-card">
             <h3><i class="fa-regular fa-user"></i> Personal Info</h3>
             <div class="info-row">
               <span class="info-label">Name</span>
-              <span class="info-value">John Doe</span>
+              <span class="info-value">${user.displayName || user.firstName + ' ' + user.lastName || 'N/A'}</span>
             </div>
             <div class="info-row">
               <span class="info-label">Email</span>
-              <span class="info-value">john.doe@example.com</span>
+              <span class="info-value">${user.email || 'N/A'}</span>
             </div>
             <div class="info-row">
               <span class="info-label">Phone</span>
-              <span class="info-value">+260 97 123 4567</span>
+              <span class="info-value">${user.phone || 'Not provided'}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Member Since</span>
+              <span class="info-value">${joinDate}</span>
             </div>
           </div>
 
           <div class="info-card">
-            <h3><i class="fa-regular fa-location-dot"></i> Default Address</h3>
+            <h3><i class="fa-regular fa-envelope"></i> Email Status</h3>
             <div class="info-row">
-              <span class="info-label">Address</span>
-              <span class="info-value">123 Cairo Road, Lusaka</span>
-            </div>
-            <div class="info-row">
-              <span class="info-label">City</span>
-              <span class="info-value">Lusaka</span>
-            </div>
-            <div class="info-row">
-              <span class="info-label">Country</span>
-              <span class="info-value">Zambia</span>
+              <span class="info-label">Verified</span>
+              <span class="info-value">
+                ${user.emailVerified ? 
+                  '<span style="color: var(--success);"><i class="fa-regular fa-circle-check"></i> Verified</span>' : 
+                  '<span style="color: var(--warning);"><i class="fa-regular fa-clock"></i> Pending</span>'}
+              </span>
             </div>
           </div>
         </div>
 
-        <!-- Recent Orders -->
         <div class="orders-section">
           <h3><i class="fa-regular fa-clock-rotate-left"></i> Recent Orders</h3>
-          <table class="orders-table">
-            <thead>
-              <tr>
-                <th>Order ID</th>
-                <th>Date</th>
-                <th>Items</th>
-                <th>Total</th>
-                <th>Status</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>#ORD-001</td>
-                <td>2024-01-15</td>
-                <td>3 items</td>
-                <td>K2,499</td>
-                <td><span class="order-status status-delivered">Delivered</span></td>
-                <td><button class="view-btn">View</button></td>
-              </tr>
-              <tr>
-                <td>#ORD-002</td>
-                <td>2024-01-20</td>
-                <td>1 item</td>
-                <td>K899</td>
-                <td><span class="order-status status-shipped">Shipped</span></td>
-                <td><button class="view-btn">View</button></td>
-              </tr>
-              <tr>
-                <td>#ORD-003</td>
-                <td>2024-01-22</td>
-                <td>2 items</td>
-                <td>K1,299</td>
-                <td><span class="order-status status-processing">Processing</span></td>
-                <td><button class="view-btn">View</button></td>
-              </tr>
-            </tbody>
-          </table>
+          <div id="recentOrdersTable">
+            <p style="text-align: center; color: var(--gray-500);">Loading orders...</p>
+          </div>
         </div>
       `;
     }
 
+    // Orders HTML
     function getOrdersHTML() {
       return `
         <div class="content-header">
@@ -903,143 +880,99 @@
         </div>
 
         <div class="orders-section">
-          <table class="orders-table">
-            <thead>
-              <tr>
-                <th>Order ID</th>
-                <th>Date</th>
-                <th>Items</th>
-                <th>Total</th>
-                <th>Status</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>#ORD-001</td>
-                <td>2024-01-15</td>
-                <td>3 items</td>
-                <td>K2,499</td>
-                <td><span class="order-status status-delivered">Delivered</span></td>
-                <td><button class="view-btn">View</button></td>
-              </tr>
-              <tr>
-                <td>#ORD-002</td>
-                <td>2024-01-20</td>
-                <td>1 item</td>
-                <td>K899</td>
-                <td><span class="order-status status-shipped">Shipped</span></td>
-                <td><button class="view-btn">View</button></td>
-              </tr>
-              <tr>
-                <td>#ORD-003</td>
-                <td>2024-01-22</td>
-                <td>2 items</td>
-                <td>K1,299</td>
-                <td><span class="order-status status-processing">Processing</span></td>
-                <td><button class="view-btn">View</button></td>
-              </tr>
-              <tr>
-                <td>#ORD-004</td>
-                <td>2024-01-10</td>
-                <td>5 items</td>
-                <td>K4,999</td>
-                <td><span class="order-status status-delivered">Delivered</span></td>
-                <td><button class="view-btn">View</button></td>
-              </tr>
-              <tr>
-                <td>#ORD-005</td>
-                <td>2024-01-05</td>
-                <td>2 items</td>
-                <td>K1,899</td>
-                <td><span class="order-status status-delivered">Delivered</span></td>
-                <td><button class="view-btn">View</button></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      `;
-    }
-
-    function getWishlistHTML() {
-      return `
-        <div class="content-header">
-          <h2>My Wishlist</h2>
-        </div>
-
-        <div class="product-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1.5rem;">
-          <div class="product-card" style="background: var(--gray-50); padding: 1rem; border-radius: var(--radius); text-align: center;">
-            <img src="https://images.unsplash.com/photo-1512499617640-c2f999098c01?auto=format&fit=crop&w=200&q=80" alt="Product" style="width: 100%; height: 150px; object-fit: contain;">
-            <h4 style="margin: 0.5rem 0;">Sony WH-1000XM4</h4>
-            <div class="price" style="color: var(--primary); font-weight: bold;">K1,299</div>
-            <button class="btn btn-primary" style="width: 100%; padding: 0.5rem; margin-top: 0.5rem;" onclick="alert('Added to cart!')">Add to Cart</button>
-          </div>
-
-          <div class="product-card" style="background: var(--gray-50); padding: 1rem; border-radius: var(--radius); text-align: center;">
-            <img src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=200&q=80" alt="Product" style="width: 100%; height: 150px; object-fit: contain;">
-            <h4 style="margin: 0.5rem 0;">Apple Watch Series 9</h4>
-            <div class="price" style="color: var(--primary); font-weight: bold;">K2,499</div>
-            <button class="btn btn-primary" style="width: 100%; padding: 0.5rem; margin-top: 0.5rem;" onclick="alert('Added to cart!')">Add to Cart</button>
-          </div>
-
-          <div class="product-card" style="background: var(--gray-50); padding: 1rem; border-radius: var(--radius); text-align: center;">
-            <img src="https://images.unsplash.com/photo-1580910051074-3eb694886505?auto=format&fit=crop&w=200&q=80" alt="Product" style="width: 100%; height: 150px; object-fit: contain;">
-            <h4 style="margin: 0.5rem 0;">ASUS ROG Strix</h4>
-            <div class="price" style="color: var(--primary); font-weight: bold;">K8,999</div>
-            <button class="btn btn-primary" style="width: 100%; padding: 0.5rem; margin-top: 0.5rem;" onclick="alert('Added to cart!')">Add to Cart</button>
-          </div>
-
-          <div class="product-card" style="background: var(--gray-50); padding: 1rem; border-radius: var(--radius); text-align: center;">
-            <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=200&q=80" alt="Product" style="width: 100%; height: 150px; object-fit: contain;">
-            <h4 style="margin: 0.5rem 0;">JBL Flip 6</h4>
-            <div class="price" style="color: var(--primary); font-weight: bold;">K599</div>
-            <button class="btn btn-primary" style="width: 100%; padding: 0.5rem; margin-top: 0.5rem;" onclick="alert('Added to cart!')">Add to Cart</button>
+          <div id="allOrdersTable">
+            <p style="text-align: center; color: var(--gray-500);">Loading orders...</p>
           </div>
         </div>
       `;
     }
 
-    function getAddressesHTML() {
-      return `
-        <div class="content-header">
-          <h2>My Addresses</h2>
-          <button class="edit-btn" onclick="alert('Add new address')">
-            <i class="fa-regular fa-plus"></i> Add Address
-          </button>
-        </div>
+    // Load user orders from Firestore
+    async function loadUserOrders() {
+      const user = auth.currentUser;
+      if (!user) return;
 
-        <div class="info-grid">
-          <div class="info-card">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-              <h3><i class="fa-regular fa-location-dot"></i> Home Address</h3>
-              <span style="background: var(--primary-soft); color: var(--primary); padding: 0.25rem 0.75rem; border-radius: 100px; font-size: 0.75rem; font-weight: 600;">Default</span>
-            </div>
-            <p>John Doe</p>
-            <p>123 Cairo Road</p>
-            <p>Lusaka, Zambia</p>
-            <p>Phone: +260 97 123 4567</p>
-            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
-              <button class="view-btn">Edit</button>
-              <button class="view-btn" style="color: var(--danger);" onclick="alert('Delete address?')">Delete</button>
-            </div>
-          </div>
+      try {
+        const ordersSnapshot = await db.collection('orders')
+          .where('userId', '==', user.uid)
+          .orderBy('createdAt', 'desc')
+          .get();
 
-          <div class="info-card">
-            <h3><i class="fa-regular fa-briefcase"></i> Work Address</h3>
-            <p>John Doe</p>
-            <p>456 Independence Avenue</p>
-            <p>Lusaka, Zambia</p>
-            <p>Phone: +260 96 123 4567</p>
-            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
-              <button class="view-btn">Edit</button>
-              <button class="view-btn" style="color: var(--danger);" onclick="alert('Delete address?')">Delete</button>
-            </div>
-          </div>
-        </div>
-      `;
+        const orders = [];
+        ordersSnapshot.forEach(doc => {
+          orders.push({ id: doc.id, ...doc.data() });
+        });
+
+        // Update stats
+        const totalOrders = orders.length;
+        const pendingOrders = orders.filter(o => o.status === 'pending' || o.status === 'processing').length;
+        const shippedOrders = orders.filter(o => o.status === 'shipped').length;
+        const deliveredOrders = orders.filter(o => o.status === 'delivered').length;
+
+        document.getElementById('totalOrders') && (document.getElementById('totalOrders').textContent = totalOrders);
+        document.getElementById('pendingOrders') && (document.getElementById('pendingOrders').textContent = pendingOrders);
+        document.getElementById('shippedOrders') && (document.getElementById('shippedOrders').textContent = shippedOrders);
+        document.getElementById('deliveredOrders') && (document.getElementById('deliveredOrders').textContent = deliveredOrders);
+
+        // Display recent orders
+        displayOrdersTable(orders.slice(0, 5), 'recentOrdersTable');
+        displayOrdersTable(orders, 'allOrdersTable');
+
+      } catch (error) {
+        console.error('Error loading orders:', error);
+      }
     }
 
+    // Display orders table
+    function displayOrdersTable(orders, containerId) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+
+      if (orders.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: var(--gray-500);">No orders found</p>';
+        return;
+      }
+
+      let html = `
+        <table class="orders-table">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Date</th>
+              <th>Items</th>
+              <th>Total</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      orders.forEach(order => {
+        const date = order.createdAt ? new Date(order.createdAt.toDate()).toLocaleDateString() : 'N/A';
+        const statusClass = order.status === 'delivered' ? 'status-delivered' :
+                           order.status === 'shipped' ? 'status-shipped' : 'status-processing';
+
+        html += `
+          <tr>
+            <td>#${order.id.slice(-6)}</td>
+            <td>${date}</td>
+            <td>${order.items?.length || 0} items</td>
+            <td>K${order.total?.toLocaleString() || 0}</td>
+            <td><span class="order-status ${statusClass}">${order.status || 'Processing'}</span></td>
+            <td><button class="view-btn" onclick="viewOrder('${order.id}')">View</button></td>
+          </tr>
+        `;
+      });
+
+      html += '</tbody></table>';
+      container.innerHTML = html;
+    }
+
+    // Profile Settings HTML
     function getProfileSettingsHTML() {
+      const user = currentUserData || {};
+      
       return `
         <div class="content-header">
           <h2>Profile Settings</h2>
@@ -1054,19 +987,23 @@
           <div class="form-grid">
             <div class="form-group">
               <label for="firstName">First Name</label>
-              <input type="text" id="firstName" value="John">
+              <input type="text" id="firstName" value="${user.firstName || ''}">
             </div>
             <div class="form-group">
               <label for="lastName">Last Name</label>
-              <input type="text" id="lastName" value="Doe">
+              <input type="text" id="lastName" value="${user.lastName || ''}">
+            </div>
+            <div class="form-group">
+              <label for="displayName">Display Name</label>
+              <input type="text" id="displayName" value="${user.displayName || ''}">
             </div>
             <div class="form-group">
               <label for="email">Email Address</label>
-              <input type="email" id="email" value="john.doe@example.com">
+              <input type="email" id="email" value="${user.email || ''}" disabled>
             </div>
             <div class="form-group">
               <label for="phone">Phone Number</label>
-              <input type="tel" id="phone" value="+260 97 123 4567">
+              <input type="tel" id="phone" value="${user.phone || ''}">
             </div>
           </div>
 
@@ -1078,6 +1015,56 @@
       `;
     }
 
+    // Update profile
+    async function updateProfile() {
+      const user = auth.currentUser;
+      if (!user) return;
+
+      const firstName = document.getElementById('firstName').value;
+      const lastName = document.getElementById('lastName').value;
+      const displayName = document.getElementById('displayName').value;
+      const phone = document.getElementById('phone').value;
+
+      try {
+        // Update Firestore
+        await db.collection('users').doc(user.uid).update({
+          firstName,
+          lastName,
+          displayName,
+          phone,
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        // Update Auth profile
+        await user.updateProfile({
+          displayName: displayName
+        });
+
+        // Refresh user data
+        await loadUserProfileData(user.uid);
+
+        // Show success message
+        document.getElementById('profileSuccess').style.display = 'flex';
+        setTimeout(() => {
+          document.getElementById('profileSuccess').style.display = 'none';
+        }, 3000);
+
+      } catch (error) {
+        console.error('Error updating profile:', error);
+        showNotification('Error updating profile', 'error');
+      }
+    }
+
+    // Reset profile form
+    function resetProfile() {
+      const user = currentUserData || {};
+      document.getElementById('firstName').value = user.firstName || '';
+      document.getElementById('lastName').value = user.lastName || '';
+      document.getElementById('displayName').value = user.displayName || '';
+      document.getElementById('phone').value = user.phone || '';
+    }
+
+    // Security HTML
     function getSecurityHTML() {
       return `
         <div class="content-header">
@@ -1110,198 +1097,102 @@
             <button type="submit" class="btn btn-primary">Update Password</button>
           </div>
         </form>
+      `;
+    }
 
-        <div style="margin-top: 2rem; padding: 1.5rem; background: #fee2e2; border-radius: var(--radius);">
-          <h3 style="color: var(--danger); margin-bottom: 0.5rem;">Delete Account</h3>
-          <p style="color: var(--gray-600); margin-bottom: 1rem;">Once you delete your account, there is no going back. Please be certain.</p>
-          <button class="btn btn-danger" onclick="alert('Delete account? This cannot be undone!')">Delete Account</button>
+    // Update password
+    async function updatePassword() {
+      const user = auth.currentUser;
+      const currentPassword = document.getElementById('currentPassword').value;
+      const newPassword = document.getElementById('newPassword').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+
+      if (!currentPassword || !newPassword || !confirmPassword) {
+        showNotification('Please fill in all fields', 'error');
+        return;
+      }
+
+      if (newPassword !== confirmPassword) {
+        showNotification('New passwords do not match', 'error');
+        return;
+      }
+
+      if (newPassword.length < 8) {
+        showNotification('Password must be at least 8 characters', 'error');
+        return;
+      }
+
+      try {
+        // Re-authenticate user
+        const credential = firebase.auth.EmailAuthProvider.credential(
+          user.email, 
+          currentPassword
+        );
+        await user.reauthenticateWithCredential(credential);
+
+        // Update password
+        await user.updatePassword(newPassword);
+
+        document.getElementById('securitySuccess').style.display = 'flex';
+        setTimeout(() => {
+          document.getElementById('securitySuccess').style.display = 'none';
+        }, 3000);
+
+        // Clear form
+        document.getElementById('currentPassword').value = '';
+        document.getElementById('newPassword').value = '';
+        document.getElementById('confirmPassword').value = '';
+
+      } catch (error) {
+        console.error('Error updating password:', error);
+        if (error.code === 'auth/wrong-password') {
+          showNotification('Current password is incorrect', 'error');
+        } else {
+          showNotification('Error updating password', 'error');
+        }
+      }
+    }
+
+    // Wishlist HTML (placeholder)
+    function getWishlistHTML() {
+      return `
+        <div class="content-header">
+          <h2>My Wishlist</h2>
+        </div>
+        <div style="text-align: center; padding: 3rem;">
+          <i class="fa-regular fa-heart" style="font-size: 3rem; color: var(--gray-400); margin-bottom: 1rem;"></i>
+          <p>Your wishlist is empty</p>
+          <a href="store.html" class="btn btn-primary" style="margin-top: 1rem; display: inline-block; width: auto;">
+            Browse Products
+          </a>
         </div>
       `;
     }
 
-    function getPaymentsHTML() {
+    // Addresses HTML (placeholder)
+    function getAddressesHTML() {
       return `
         <div class="content-header">
-          <h2>Payment Methods</h2>
-          <button class="edit-btn" onclick="alert('Add payment method')">
-            <i class="fa-regular fa-plus"></i> Add Method
+          <h2>My Addresses</h2>
+          <button class="edit-btn" onclick="alert('Add address feature coming soon!')">
+            <i class="fa-regular fa-plus"></i> Add Address
           </button>
         </div>
-
-        <div class="info-grid">
-          <div class="info-card">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-              <h3><i class="fa-regular fa-credit-card"></i> Credit Card</h3>
-              <span style="background: var(--primary-soft); color: var(--primary); padding: 0.25rem 0.75rem; border-radius: 100px; font-size: 0.75rem; font-weight: 600;">Default</span>
-            </div>
-            <p>•••• •••• •••• 4242</p>
-            <p>John Doe</p>
-            <p>Expires: 12/25</p>
-            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
-              <button class="view-btn">Edit</button>
-              <button class="view-btn" style="color: var(--danger);">Remove</button>
-            </div>
-          </div>
-
-          <div class="info-card">
-            <h3><i class="fa-regular fa-mobile"></i> Mobile Money</h3>
-            <p>Airtel Money</p>
-            <p>+260 97 123 4567</p>
-            <p>John Doe</p>
-            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
-              <button class="view-btn">Edit</button>
-              <button class="view-btn" style="color: var(--danger);">Remove</button>
-            </div>
-          </div>
+        <div style="text-align: center; padding: 2rem;">
+          <p>No addresses saved yet.</p>
         </div>
       `;
     }
 
-    function getNotificationsHTML() {
-      return `
-        <div class="content-header">
-          <h2>Notification Settings</h2>
-        </div>
-
-        <div class="info-card">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-            <div>
-              <h4>Order Updates</h4>
-              <p style="color: var(--gray-600); font-size: 0.9rem;">Receive notifications about your orders</p>
-            </div>
-            <label class="switch">
-              <input type="checkbox" checked>
-              <span class="slider round"></span>
-            </label>
-          </div>
-
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-            <div>
-              <h4>Promotions & Deals</h4>
-              <p style="color: var(--gray-600); font-size: 0.9rem;">Receive special offers and discounts</p>
-            </div>
-            <label class="switch">
-              <input type="checkbox" checked>
-              <span class="slider round"></span>
-            </label>
-          </div>
-
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-            <div>
-              <h4>Newsletter</h4>
-              <p style="color: var(--gray-600); font-size: 0.9rem;">Receive weekly tech news and updates</p>
-            </div>
-            <label class="switch">
-              <input type="checkbox">
-              <span class="slider round"></span>
-            </label>
-          </div>
-
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <div>
-              <h4>SMS Notifications</h4>
-              <p style="color: var(--gray-600); font-size: 0.9rem;">Get text messages for order updates</p>
-            </div>
-            <label class="switch">
-              <input type="checkbox" checked>
-              <span class="slider round"></span>
-            </label>
-          </div>
-        </div>
-
-        <style>
-          .switch {
-            position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 24px;
-          }
-
-          .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-          }
-
-          .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: var(--gray-300);
-            transition: .3s;
-            border-radius: 24px;
-          }
-
-          .slider:before {
-            position: absolute;
-            content: "";
-            height: 18px;
-            width: 18px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
-            transition: .3s;
-            border-radius: 50%;
-          }
-
-          input:checked + .slider {
-            background-color: var(--primary);
-          }
-
-          input:checked + .slider:before {
-            transform: translateX(26px);
-          }
-        </style>
-      `;
+    // Load user addresses (placeholder)
+    function loadUserAddresses() {
+      // This would load addresses from Firestore
     }
 
-    function updateProfile() {
-      document.getElementById('profileSuccess').style.display = 'flex';
-      setTimeout(() => {
-        document.getElementById('profileSuccess').style.display = 'none';
-      }, 3000);
-    }
-
-    function resetProfile() {
-      document.getElementById('firstName').value = 'John';
-      document.getElementById('lastName').value = 'Doe';
-      document.getElementById('email').value = 'john.doe@example.com';
-      document.getElementById('phone').value = '+260 97 123 4567';
-    }
-
-    function updatePassword() {
-      const current = document.getElementById('currentPassword').value;
-      const newPass = document.getElementById('newPassword').value;
-      const confirm = document.getElementById('confirmPassword').value;
-
-      if (!current || !newPass || !confirm) {
-        alert('Please fill in all fields');
-        return;
-      }
-
-      if (newPass !== confirm) {
-        alert('New passwords do not match');
-        return;
-      }
-
-      document.getElementById('securitySuccess').style.display = 'flex';
-      setTimeout(() => {
-        document.getElementById('securitySuccess').style.display = 'none';
-      }, 3000);
-
-      // Clear form
-      document.getElementById('currentPassword').value = '';
-      document.getElementById('newPassword').value = '';
-      document.getElementById('confirmPassword').value = '';
-    }
-
-    function logout() {
-      if (confirm('Are you sure you want to sign out?')) {
-        window.location.href = 'index.html';
-      }
+    // View order details
+    function viewOrder(orderId) {
+      alert(`Viewing order: ${orderId}`);
+      // This would open order details
     }
 
     // Hide welcome message after 5 seconds
